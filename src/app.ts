@@ -10,6 +10,7 @@ import winston from "winston";
 import authRouter from "./modules/auth/routes";
 import userRouter from "./modules/user/routes";
 import { AppError } from "./utils/appError";
+import bodyParser from "body-parser";
 
 validateEnv();
 
@@ -17,8 +18,11 @@ const prisma = new PrismaClient();
 const app = express();
 
 async function bootstrap() {
-  // 1.Body Parser
-  app.use(express.json({ limit: "10kb" }));
+  // parse application/x-www-form-urlencoded
+  app.use(bodyParser.urlencoded({ extended: false }));
+
+  // parse application/json
+  app.use(bodyParser.json());
 
   // 2. Cookie Parser
   app.use(cookieParser());

@@ -5,13 +5,10 @@ import { v4 as uuidv4 } from "uuid";
 import redisClient from "../../../utils/connectRedis";
 import { RouteHandler } from "../../../types/handler";
 
-const globalSalt = "some-random-secret-string";
 // 60 minutes
 const sessionIdExpiration = 1000 * 60 * 60;
 
 const prisma = new PrismaClient();
-
-const getCombinedSalt = (userSalt: string) => `${globalSalt}.${userSalt}`;
 
 export const registerUserHandler: RouteHandler<CreateUserInput> = async (
   req,
@@ -20,10 +17,7 @@ export const registerUserHandler: RouteHandler<CreateUserInput> = async (
 ) => {
   try {
     const userSalt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(
-      req.body.password,
-      getCombinedSalt(userSalt)
-    );
+    const hashedPassword = await bcrypt.hash(req.body.password, userSalt);
 
     // const verifyCode = crypto.randomBytes(32).toString("hex");
     // const verificationCode = crypto
@@ -43,8 +37,8 @@ export const registerUserHandler: RouteHandler<CreateUserInput> = async (
     // Generate a session on login and register
     const sessionId = uuidv4();
     res.cookie("session_id", sessionId, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: false, // true,
+      secure: false, // true,
       sameSite: "lax",
       expires: new Date(Date.now() + sessionIdExpiration),
     });
@@ -59,7 +53,11 @@ export const registerUserHandler: RouteHandler<CreateUserInput> = async (
     res.status(201).json({
       status: "success",
       data: {
-        user,
+        user: {
+          name: user.name,
+          email: user.email,
+          id: user.id,
+        },
       },
     });
   } catch (err: any) {

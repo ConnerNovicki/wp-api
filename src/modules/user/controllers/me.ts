@@ -3,16 +3,16 @@ import { AppError } from "../../../utils/appError";
 
 export const getMeHandler: AuthRouteHandler = async (req, res, next) => {
   try {
-    const user = res.locals.user;
+    const shortUser = res.locals.shortUser;
 
-    if (!user) {
+    if (!shortUser) {
       return next(new AppError("Developer", "/me should deserialize user"));
     }
 
-    return res.send(200).json({
+    return res.status(201).json({
       status: "success",
       data: {
-        user,
+        user: shortUser,
       },
     });
   } catch (err: any) {

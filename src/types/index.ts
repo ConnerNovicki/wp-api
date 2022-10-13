@@ -4,5 +4,5 @@ import { Response } from "express";
 export type ShortUser = Pick<User, "email" | "name" | "id" | "verified">;
 
 export interface AuthResponse extends Response {
-  locals: { user: ShortUser };
+  locals: { shortUser: ShortUser };
 }

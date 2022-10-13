@@ -6,7 +6,7 @@ export const requireUser = (
   next: NextFunction
 ) => {
   try {
-    const user = res.locals.user;
+    const user = res.locals.shortUser;
 
     if (!user) {
       return next(new Error(`Session has expired or user doesn't exist`));
