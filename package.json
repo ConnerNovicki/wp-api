@@ -1,0 +1,41 @@
+{
+  "name": "wp-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node-dev --respawn --transpile-only --exit-child src/app.ts",
+    "migrate": "npx prisma migrate dev --name user-entity && npx prisma generate",
+    "push": "npx prisma db push",
+    "build": "tsc . -p"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/config": "^3.3.0",
+    "@types/express": "^4.17.14",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/node": "^18.8.4",
+    "@types/uuid": "^8.3.4",
+    "prisma": "^4.4.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.4.0",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/cors": "^2.8.12",
+    "@types/winston": "^2.4.4",
+    "bcryptjs": "^2.4.3",
+    "config": "^3.3.8",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "envalid": "^7.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "redis": "^4.3.1",
+    "ts-node-dev": "^2.0.0",
+    "uuid": "^9.0.0",
+    "winston": "^3.8.2",
+    "zod": "^3.19.1"
+  }
+}
