@@ -12,12 +12,7 @@ export const loginUserSchema = object({
   }),
 });
 
-export type CreateUserInput = Omit<
-  TypeOf<typeof registerUserSchema>["body"],
-  "passwordConfirm"
->;
-
-export type LoginUserInput = TypeOf<typeof loginUserSchema>["body"];
+export type LoginUserSchema = TypeOf<typeof loginUserSchema>;
 
 export const registerUserSchema = object({
   body: object({
@@ -41,3 +36,15 @@ export const registerUserSchema = object({
     message: "Passwords do not match",
   }),
 });
+
+export type RegisterUserSchema = TypeOf<typeof registerUserSchema>;
+
+export const verifyUserSchema = object({
+  query: object({
+    token: string({
+      required_error: "Token is required",
+    }),
+  }),
+});
+
+export type VerifyUserSchema = TypeOf<typeof verifyUserSchema>;

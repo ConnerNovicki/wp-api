@@ -8,9 +8,17 @@ function logout(res: Response) {
 
 export const logoutUserHandler: AuthRouteHandler = async (req, res, next) => {
   try {
-    const sessionId = req.cookies.session_id;
+    let sessionId;
+    if (req.cookies.session_id) {
+      sessionId = req.cookies.session_id;
+    } else if (req.headers.authorization) {
+      const splitAuth = req.headers.authorization.split(" ");
+      if (splitAuth[0] === "Bearer") {
+        sessionId = splitAuth[1];
+      }
+    }
     if (sessionId) {
-      await redisClient.del(sessionId);
+      await redisClient.del(`user_session.${sessionId}`);
     }
 
     logout(res);

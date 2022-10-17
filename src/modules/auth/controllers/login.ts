@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
-import { LoginUserInput } from "../schema";
+import { LoginUserSchema } from "../schema";
 import { v4 as uuidv4 } from "uuid";
 import redisClient from "../../../utils/connectRedis";
 import { RouteHandler } from "../../../types/handler";
@@ -9,7 +9,7 @@ import { AppError } from "../../../utils/appError";
 const prisma = new PrismaClient();
 const sessionIdExpiration = 1000 * 60 * 60;
 
-export const loginUserHandler: RouteHandler<LoginUserInput> = async (
+export const loginUserHandler: RouteHandler<LoginUserSchema> = async (
   req,
   res,
   next

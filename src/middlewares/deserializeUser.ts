@@ -1,15 +1,14 @@
-import { User } from "@prisma/client";
-import { NextFunction, Request, Response } from "express";
-import { ShortUser } from "../types";
+import { NextFunction, Request } from "express";
+import { IResponse, ShortUser } from "../types";
 // import { omit } from "lodash";
 // import { excludedFields, findUniqueUser } from "../services/user.service";
 // import AppError from "../utils/appError";
-import redisClient from "../utils/connectRedis";
+// import redisClient from "../utils/connectRedis";
 // import { verifyJwt } from "../utils/jwt";
 
 export const deserializeUser = async (
   req: Request,
-  res: Response,
+  res: IResponse,
   next: NextFunction
 ) => {
   try {
@@ -28,7 +27,12 @@ export const deserializeUser = async (
       return next(new Error("No session id - not logged in"));
     }
 
-    const userStr = await redisClient.get(`user_session.${sessionId}`);
+    console.log("whatt");
+
+    const userStr = await res.locals.context.services.redis.client.get(
+      `user_session.${sessionId}`
+    );
+    console.log("whatt2");
 
     if (!userStr) {
       return next(new Error("No user in short term storage for session id"));
@@ -36,6 +40,7 @@ export const deserializeUser = async (
 
     const user = JSON.parse(userStr) as ShortUser;
 
+    // @ts-ignore -- the whole point of this middleware is to define this.
     res.locals.shortUser = user;
 
     next();

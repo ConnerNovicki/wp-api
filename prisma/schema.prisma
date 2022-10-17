@@ -21,7 +21,7 @@ model User {
   salt     String
   // role     RoleEnumType? @default(user)
 
-  // verificationCode String? @db.Text
+  verifyToken String? @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

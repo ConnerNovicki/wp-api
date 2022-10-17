@@ -3,7 +3,6 @@ import express, { NextFunction, Response, Request } from "express";
 import config from "config";
 import validateEnv from "./utils/validateEnv";
 import { PrismaClient } from "@prisma/client";
-import redisClient from "./utils/connectRedis";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import winston from "winston";
@@ -11,8 +10,10 @@ import authRouter from "./modules/auth/routes";
 import userRouter from "./modules/user/routes";
 import { AppError } from "./utils/appError";
 import bodyParser from "body-parser";
+import { injectContext } from "./middlewares/injectContext";
+import { IResponse } from "./types";
 
-validateEnv();
+const env = validateEnv();
 
 const prisma = new PrismaClient();
 const app = express();
@@ -58,13 +59,15 @@ async function bootstrap() {
     );
   }
 
+  app.use(injectContext(env));
+
   // ROUTES
   app.use("/api/auth", authRouter);
   app.use("/api/users", userRouter);
 
   // Testing
-  app.get("/api/healthchecker", async (_, res: Response) => {
-    const message = await redisClient.get("try");
+  app.get("/api/healthchecker", async (_, res: IResponse) => {
+    const message = await res.locals.context.services.redis.client.get("try");
     res.status(200).json({
       status: "success",
       message,

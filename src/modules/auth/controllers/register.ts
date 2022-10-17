@@ -1,5 +1,6 @@
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
-import { CreateUserInput } from "../schema";
+import { RegisterUserSchema } from "../schema";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import redisClient from "../../../utils/connectRedis";
@@ -10,28 +11,46 @@ const sessionIdExpiration = 1000 * 60 * 60;
 
 const prisma = new PrismaClient();
 
-export const registerUserHandler: RouteHandler<CreateUserInput> = async (
+export const registerUserHandler: RouteHandler<RegisterUserSchema> = async (
   req,
   res,
   next
 ) => {
+  const context = res.locals.context;
+
   try {
     const userSalt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(req.body.password, userSalt);
 
-    // const verifyCode = crypto.randomBytes(32).toString("hex");
-    // const verificationCode = crypto
-    //   .createHash("sha256")
-    //   .update(verifyCode)
-    //   .digest("hex");
+    const verifyCode = crypto.randomBytes(32).toString("hex");
+    const verifyToken = crypto
+      .createHash("sha256")
+      .update(verifyCode)
+      .digest("hex");
+
+    const name = req.body.name;
+    const email = req.body.email.toLowerCase();
 
     const user = await prisma.user.create({
       data: {
-        name: req.body.name,
-        email: req.body.email.toLowerCase(),
+        name,
+        email,
         password: hashedPassword,
         salt: userSalt,
+        verifyToken,
       },
+    });
+
+    context.services.mail.sendGenericEmail({
+      to: "connernovicki@gmail.com", // email,
+      text: "It's time to verify your email address.",
+      html: `
+          <div>
+            <p>Please verify your email address</p>
+            <a href="${context.env.BASE_URL}/auth/verify?token=${verifyToken}">Verify</a>
+          </div>
+        `,
+      subject: "Verify your email",
     });
 
     // Generate a session on login and register
@@ -58,6 +77,7 @@ export const registerUserHandler: RouteHandler<CreateUserInput> = async (
           email: user.email,
           id: user.id,
         },
+        sessionId,
       },
     });
   } catch (err: any) {
