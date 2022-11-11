@@ -1,0 +1,14 @@
+TODO:
+  - Verify email endpoint that takes a token (somehow hashed to avoid sending the straightforward verifyToken as token) and marks user in DB as verified if matches
+    - Add new salt for email tokens specifically
+  - Forgot password endpoint, send email to user that allows them to reset password
+  - AppError more robust to auto-log possibly?
+  - Testing?
+  - Pre-commit or pre-push hook for tsc check?
+  - Fix sendgrid token to be in env instead
+  - API endpoint docs somehow? For input -> output?
+    - Currently no typing for returns of endpoints. DONT KNOW how to do this yet... but, automate automate automate.
+  - Setup basics of translations?
+
+Technologies to use:
+  - Sendinblue for emails... instead of sendgrid

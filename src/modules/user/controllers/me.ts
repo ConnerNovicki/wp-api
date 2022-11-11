@@ -1,5 +1,6 @@
 import { AuthRouteHandler } from "../../../types/handler";
 import { AppError } from "../../../utils/appError";
+import { respondSuccess } from "../../../utils/route-helpers";
 
 export const getMeHandler: AuthRouteHandler = async (req, res, next) => {
   try {
@@ -9,11 +10,8 @@ export const getMeHandler: AuthRouteHandler = async (req, res, next) => {
       return next(new AppError("Developer", "/me should deserialize user"));
     }
 
-    return res.status(201).json({
-      status: "success",
-      data: {
-        user: shortUser,
-      },
+    return respondSuccess(res, {
+      user: shortUser,
     });
   } catch (err: any) {
     return next(err);

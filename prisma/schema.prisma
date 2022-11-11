@@ -10,28 +10,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Salt {
+  id     String  @id @default(uuid())
+  value  String
+  User   User?
+  userId String? @unique
+
+  @@map(name: "salts")
+}
+
 model User {
-  id       String   @id @default(uuid())
-  name     String   @db.VarChar(255)
-  email    String
-  photo    String?  @default("default.png")
-  verified Boolean? @default(false)
+  id            String  @id @default(uuid())
+  firstName     String  @db.VarChar(255)
+  lastName      String  @db.VarChar(255)
+  email         String  @unique @db.VarChar(255)
+  emailVerified Boolean @default(false)
 
   password String
-  salt     String
-  // role     RoleEnumType? @default(user)
+  salt     Salt   @relation(fields: [saltId], references: [id])
+  saltId   String @unique
 
-  verifyToken String? @db.Text
+  // verifyToken String? @db.Text
+
+  account PersonalAccount?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([email])
   @@index([email])
   @@map(name: "users")
 }
 
-// enum RoleEnumType {
-//   user
-//   admin
-// }
+model PersonalAccount {
+  id           String                @id @default(uuid())
+  name         String
+  handle       String                @unique @db.VarChar(255)
+  owner        User                  @relation(fields: [ownerId], references: [id])
+  ownerId      String                @unique
+  bankAccounts PersonalBankAccount[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map(name: "personalAccounts")
+}
+
+model PersonalBankAccount {
+  id        String          @id @default(uuid())
+  Account   PersonalAccount @relation(fields: [accountId], references: [id])
+  accountId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

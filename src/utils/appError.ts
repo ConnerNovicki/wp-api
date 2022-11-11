@@ -1,10 +1,16 @@
-type ErrorType = "Developer" | "Unknown" | "Service" | "Authentication";
+type ErrorType =
+  | "Developer"
+  | "Unknown"
+  | "Service"
+  | "Authentication"
+  | "Validation";
 
 const errorCodes: { [k in ErrorType]: number } = {
   Developer: 409,
   Service: 412,
   Unknown: 408,
   Authentication: 402,
+  Validation: 405,
 };
 
 export class AppError {

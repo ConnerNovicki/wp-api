@@ -5,7 +5,6 @@ import validateEnv from "./utils/validateEnv";
 import { PrismaClient } from "@prisma/client";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import winston from "winston";
 import authRouter from "./modules/auth/routes";
 import userRouter from "./modules/user/routes";
 import { AppError } from "./utils/appError";
@@ -36,30 +35,7 @@ async function bootstrap() {
     })
   );
 
-  // 4. Logging
-  const logger = winston.createLogger({
-    level: "info",
-    format: winston.format.json(),
-    defaultMeta: { service: "user-service" },
-    transports: [
-      //
-      // - Write all logs with importance level of `error` or less to `error.log`
-      // - Write all logs with importance level of `info` or less to `combined.log`
-      //
-      new winston.transports.File({ filename: "error.log", level: "error" }),
-      new winston.transports.File({ filename: "combined.log" }),
-    ],
-  });
-
-  if (process.env.NODE_ENV !== "production") {
-    logger.add(
-      new winston.transports.Console({
-        format: winston.format.simple(),
-      })
-    );
-  }
-
-  app.use(injectContext(env));
+  app.use(injectContext(env, prisma));
 
   // ROUTES
   app.use("/api/auth", authRouter);
@@ -67,7 +43,7 @@ async function bootstrap() {
 
   // Testing
   app.get("/api/healthchecker", async (_, res: IResponse) => {
-    const message = await res.locals.context.services.redis.client.get("try");
+    const message = await res.locals.context.Services.Redis.client.get("try");
     res.status(200).json({
       status: "success",
       message,

@@ -1,5 +1,4 @@
 import { object, string, TypeOf, z } from "zod";
-// import { RoleEnumType } from "../entities/user.entity";
 
 export const loginUserSchema = object({
   body: object({
@@ -16,7 +15,10 @@ export type LoginUserSchema = TypeOf<typeof loginUserSchema>;
 
 export const registerUserSchema = object({
   body: object({
-    name: string({
+    firstName: string({
+      required_error: "Name is required",
+    }),
+    lastName: string({
       required_error: "Name is required",
     }),
     email: string({
@@ -30,7 +32,6 @@ export const registerUserSchema = object({
     passwordConfirm: string({
       required_error: "Please confirm your password",
     }),
-    // role: z.optional(z.nativeEnum(RoleEnumType)),
   }).refine((data) => data.password === data.passwordConfirm, {
     path: ["passwordConfirm"],
     message: "Passwords do not match",

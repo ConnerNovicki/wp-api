@@ -6,5 +6,9 @@ export const verifyUserHandler: RouteHandler<VerifyUserSchema> = async (
   res,
   next
 ) => {
-  req.query.token;
+  try {
+    const { token } = req.query;
+
+    // LOGIC...
+  } catch (e) {}
 };

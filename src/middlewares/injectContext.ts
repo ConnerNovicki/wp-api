@@ -4,12 +4,16 @@ import MailService from "../services/mail";
 import winston from "winston";
 import { Environment } from "../utils/validateEnv";
 import RedisService from "../services/redis";
+import I18nService from "../services/locale";
+import { PrismaClient } from "@prisma/client";
+import SessionService from "../services/session";
+import UserService from "../services/user";
 
 export const injectContext =
-  (env: Environment) =>
+  (env: Environment, prisma: PrismaClient) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const logger = winston.createLogger({
+      const Logger = winston.createLogger({
         level: "info",
         format: winston.format.json(),
         defaultMeta: { service: "user-service" },
@@ -27,25 +31,32 @@ export const injectContext =
       });
 
       if (process.env.NODE_ENV !== "production") {
-        logger.add(
+        Logger.add(
           new winston.transports.Console({
             format: winston.format.simple(),
           })
         );
       }
 
-      const mail = new MailService({
+      const Mail = new MailService({
         apiKey:
           "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",
-        logger,
+        Logger,
       });
-      const redis = new RedisService("redis://localhost:6379");
+      const Redis = new RedisService("redis://localhost:6379");
+      const I18n = new I18nService();
+      const Session = new SessionService();
+      const User = new UserService();
 
       const context: IContext = {
-        services: {
-          mail,
-          logger,
-          redis,
+        Services: {
+          Logger,
+          Session,
+          I18n,
+          User,
+          Mail,
+          Db: prisma,
+          Redis,
         },
         env,
       };
