@@ -1,8 +1,27 @@
+import { object, string, TypeOf } from "zod";
 import { AuthRouteHandler } from "../../../types/handler";
 import { AppError } from "../../../utils/appError";
 import { respondSuccess } from "../../../utils/route-helpers";
 
-export const logoutUserHandler: AuthRouteHandler = async (req, res, next) => {
+// Input
+export const verifyUserSchema = object({
+  query: object({
+    token: string({
+      required_error: "Token is required",
+    }),
+  }),
+});
+
+export type VerifyUserInput = TypeOf<typeof verifyUserSchema>;
+
+// Output
+
+// Endpoint
+export const logoutUserHandler: AuthRouteHandler<VerifyUserInput> = async (
+  req,
+  res,
+  next
+) => {
   const context = res.locals.context;
   const { Services } = context;
   try {

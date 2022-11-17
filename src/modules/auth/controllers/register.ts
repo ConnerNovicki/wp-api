@@ -1,13 +1,48 @@
-import { RegisterUserSchema } from "../schema";
 import { Prisma } from "@prisma/client";
+import { object, string, TypeOf } from "zod";
+import { ShortUser } from "../../../types";
 import { RouteHandler } from "../../../types/handler";
 import { respondSuccess } from "../../../utils/route-helpers";
 
-export const registerUserHandler: RouteHandler<RegisterUserSchema> = async (
-  req,
-  res,
-  next
-) => {
+// Input
+const registerUserSchema = object({
+  body: object({
+    firstName: string({
+      required_error: "Name is required",
+    }),
+    lastName: string({
+      required_error: "Name is required",
+    }),
+    email: string({
+      required_error: "Email address is required",
+    }).email("Invalid email address"),
+    password: string({
+      required_error: "Password is required",
+    })
+      .min(8, "Password must be more than 8 characters")
+      .max(32, "Password must be less than 32 characters"),
+    passwordConfirm: string({
+      required_error: "Please confirm your password",
+    }),
+  }).refine((data) => data.password === data.passwordConfirm, {
+    path: ["passwordConfirm"],
+    message: "Passwords do not match",
+  }),
+});
+
+type RegisterUserInput = TypeOf<typeof registerUserSchema>;
+
+// Output
+type RegisterUserOutput = {
+  user: ShortUser;
+  sessionId: string;
+};
+
+// Endpoint
+export const registerUserHandler: RouteHandler<
+  RegisterUserInput,
+  RegisterUserOutput
+> = async (req, res, next) => {
   const context = res.locals.context;
   const { Services } = res.locals.context;
 
@@ -20,7 +55,7 @@ export const registerUserHandler: RouteHandler<RegisterUserSchema> = async (
       user
     );
 
-    respondSuccess(res, {
+    return respondSuccess(res, {
       user: {
         firstName: user.firstName,
         lastName: user.lastName,
@@ -37,6 +72,6 @@ export const registerUserHandler: RouteHandler<RegisterUserSchema> = async (
         });
       }
     }
-    next(err);
+    return next(err);
   }
 };

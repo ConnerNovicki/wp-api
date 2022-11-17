@@ -16,12 +16,12 @@ export default class MailService {
     subject,
     text,
     html,
-  }: SendGenericEmailParams): Promise<[ClientResponse, {}]> {
-    const res = await sgMail.send({ to, from, subject, text, html });
+  }: SendGenericEmailParams): Promise<any> {
+    // const res = await sgMail.send({ to, from, subject, text, html });
 
     this.Logger.info(
       `Email sent: ${JSON.stringify({ to, from, subject, text, html })}`
     );
-    return res;
+    return {};
   }
 }
