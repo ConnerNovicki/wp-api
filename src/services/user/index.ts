@@ -26,12 +26,6 @@ export default class UserService {
     const userSalt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, userSalt);
 
-    // const verifyCode = crypto.randomBytes(32).toString("hex");
-    // const verifyToken = crypto
-    //   .createHash("sha256")
-    //   .update(verifyCode)
-    //   .digest("hex");
-
     const emailLower = email.toLowerCase();
 
     const user = await Services.Db.user.create({

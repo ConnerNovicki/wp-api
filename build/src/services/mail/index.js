@@ -20,9 +20,9 @@ class MailService {
     }
     sendGenericEmail({ to, from = "novcon@fuspinc.com", subject, text, html, }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield mail_1.default.send({ to, from, subject, text, html });
+            // const res = await sgMail.send({ to, from, subject, text, html });
             this.Logger.info(`Email sent: ${JSON.stringify({ to, from, subject, text, html })}`);
-            return res;
+            return {};
         });
     }
 }

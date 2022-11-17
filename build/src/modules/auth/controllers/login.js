@@ -9,8 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUserHandler = void 0;
+exports.loginUserHandler = exports.loginUserSchema = void 0;
 const route_helpers_1 = require("../../../utils/route-helpers");
+const zod_1 = require("zod");
+// Input
+exports.loginUserSchema = (0, zod_1.object)({
+    body: (0, zod_1.object)({
+        email: (0, zod_1.string)({
+            required_error: "Email address is required",
+        }).email("Invalid email address"),
+        password: (0, zod_1.string)({
+            required_error: "Password is required",
+        }).min(8, "Invalid email or password"),
+    }),
+});
+// Endpoint
 const loginUserHandler = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const context = res.locals.context;
     const { Services } = context;
@@ -18,7 +31,15 @@ const loginUserHandler = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         const { email, password } = req.body;
         const user = yield Services.User.findUser(context, email, password);
         const sessionId = Services.Session.createUserLoginSession(context, res, user);
-        return (0, route_helpers_1.respondSuccess)(res, { sessionId });
+        return (0, route_helpers_1.respondSuccess)(res, {
+            sessionId,
+            user: {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                emailVerified: user.emailVerified,
+            },
+        });
     }
     catch (err) {
         return next(err);

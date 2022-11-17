@@ -1,4 +1,5 @@
 import { NextFunction, Request } from "express";
+import { RedisUser } from "../services/session/types";
 import { IResponse, ShortUser } from "../types";
 
 export const deserializeUser = async (
@@ -17,13 +18,13 @@ export const deserializeUser = async (
     const userStr = await res.locals.context.Services.Redis.client.get(
       `user_session.${sessionId}`
     );
-    console.log("whatt2");
 
     if (!userStr) {
       return next(new Error("No user in short term storage for session id"));
     }
 
-    const user = JSON.parse(userStr) as ShortUser;
+    const redisUser: RedisUser = JSON.parse(userStr);
+    const user = redisUser as ShortUser;
 
     // @ts-ignore -- the whole point of this middleware is to define this.
     res.locals.shortUser = user;

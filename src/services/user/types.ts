@@ -1,3 +1,3 @@
-import { RegisterUserSchema } from "../../modules/auth/schema";
+import { RegisterUserInput } from "../../modules/auth/controllers/register";
 
-export type CreateUserParams = RegisterUserSchema;
+export type CreateUserParams = RegisterUserInput;

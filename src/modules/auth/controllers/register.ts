@@ -5,7 +5,7 @@ import { RouteHandler } from "../../../types/handler";
 import { respondSuccess } from "../../../utils/route-helpers";
 
 // Input
-const registerUserSchema = object({
+export const registerUserSchema = object({
   body: object({
     firstName: string({
       required_error: "Name is required",
@@ -30,7 +30,7 @@ const registerUserSchema = object({
   }),
 });
 
-type RegisterUserInput = TypeOf<typeof registerUserSchema>;
+export type RegisterUserInput = TypeOf<typeof registerUserSchema>;
 
 // Output
 type RegisterUserOutput = {
@@ -60,6 +60,7 @@ export const registerUserHandler: RouteHandler<
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        emailVerified: user.emailVerified,
       },
       sessionId,
     });

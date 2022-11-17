@@ -9,7 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyUserHandler = void 0;
+exports.verifyUserHandler = exports.verifyUserSchema = void 0;
+const zod_1 = require("zod");
+// Input
+exports.verifyUserSchema = (0, zod_1.object)({
+    query: (0, zod_1.object)({
+        token: (0, zod_1.string)({
+            required_error: "Token is required",
+        }),
+    }),
+});
+// Output
+// Endpoint
 const verifyUserHandler = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { token } = req.query;

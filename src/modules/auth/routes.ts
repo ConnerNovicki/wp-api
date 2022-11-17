@@ -1,11 +1,13 @@
 import express from "express";
-import { loginUserHandler } from "./controllers/login";
+import { loginUserHandler, loginUserSchema } from "./controllers/login";
 import { logoutUserHandler } from "./controllers/logout";
-import { registerUserHandler } from "./controllers/register";
+import {
+  registerUserHandler,
+  registerUserSchema,
+} from "./controllers/register";
 import { deserializeUser } from "../../middlewares/deserializeUser";
 import { requireUser } from "../../middlewares/requireUser";
 import { validate } from "../../middlewares/validate";
-import { loginUserSchema, registerUserSchema } from "./schema";
 
 const router = express.Router();
 

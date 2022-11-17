@@ -11,17 +11,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMeHandler = void 0;
 const appError_1 = require("../../../utils/appError");
+const route_helpers_1 = require("../../../utils/route-helpers");
 const getMeHandler = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const shortUser = res.locals.shortUser;
         if (!shortUser) {
             return next(new appError_1.AppError("Developer", "/me should deserialize user"));
         }
-        return res.status(201).json({
-            status: "success",
-            data: {
-                user: shortUser,
-            },
+        return (0, route_helpers_1.respondSuccess)(res, {
+            user: shortUser,
         });
     }
     catch (err) {

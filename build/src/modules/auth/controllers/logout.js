@@ -12,6 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.logoutUserHandler = void 0;
 const appError_1 = require("../../../utils/appError");
 const route_helpers_1 = require("../../../utils/route-helpers");
+// Input
+// Output
+// Endpoint
 const logoutUserHandler = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const context = res.locals.context;
     const { Services } = context;
@@ -24,7 +27,7 @@ const logoutUserHandler = (req, res, next) => __awaiter(void 0, void 0, void 0, 
         if (sessionId) {
             yield Services.Session.deleteSession(context, res, sessionId);
         }
-        (0, route_helpers_1.respondSuccess)(res);
+        return (0, route_helpers_1.respondSuccess)(res);
     }
     catch (err) {
         next(err);

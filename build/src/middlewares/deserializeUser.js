@@ -18,11 +18,11 @@ const deserializeUser = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
             return next(new Error("No session id - not logged in"));
         }
         const userStr = yield res.locals.context.Services.Redis.client.get(`user_session.${sessionId}`);
-        console.log("whatt2");
         if (!userStr) {
             return next(new Error("No user in short term storage for session id"));
         }
-        const user = JSON.parse(userStr);
+        const redisUser = JSON.parse(userStr);
+        const user = redisUser;
         // @ts-ignore -- the whole point of this middleware is to define this.
         res.locals.shortUser = user;
         next();

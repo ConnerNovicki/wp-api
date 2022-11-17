@@ -9,20 +9,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerUserHandler = void 0;
+exports.registerUserHandler = exports.registerUserSchema = void 0;
 const client_1 = require("@prisma/client");
+const zod_1 = require("zod");
 const route_helpers_1 = require("../../../utils/route-helpers");
+// Input
+exports.registerUserSchema = (0, zod_1.object)({
+    body: (0, zod_1.object)({
+        firstName: (0, zod_1.string)({
+            required_error: "Name is required",
+        }),
+        lastName: (0, zod_1.string)({
+            required_error: "Name is required",
+        }),
+        email: (0, zod_1.string)({
+            required_error: "Email address is required",
+        }).email("Invalid email address"),
+        password: (0, zod_1.string)({
+            required_error: "Password is required",
+        })
+            .min(8, "Password must be more than 8 characters")
+            .max(32, "Password must be less than 32 characters"),
+        passwordConfirm: (0, zod_1.string)({
+            required_error: "Please confirm your password",
+        }),
+    }).refine((data) => data.password === data.passwordConfirm, {
+        path: ["passwordConfirm"],
+        message: "Passwords do not match",
+    }),
+});
+// Endpoint
 const registerUserHandler = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const context = res.locals.context;
     const { Services } = res.locals.context;
     try {
         const user = yield Services.User.createUser(context, req);
         const sessionId = Services.Session.createUserLoginSession(context, res, user);
-        (0, route_helpers_1.respondSuccess)(res, {
+        return (0, route_helpers_1.respondSuccess)(res, {
             user: {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
+                emailVerified: user.emailVerified,
             },
             sessionId,
         });
@@ -36,7 +64,7 @@ const registerUserHandler = (req, res, next) => __awaiter(void 0, void 0, void 0
                 });
             }
         }
-        next(err);
+        return next(err);
     }
 });
 exports.registerUserHandler = registerUserHandler;

@@ -1,9 +1,10 @@
 import { RouteHandler } from "../../../types/handler";
 import { respondSuccess } from "../../../utils/route-helpers";
 import { object, string, TypeOf } from "zod";
+import { ShortUser } from "../../../types";
 
 // Input
-const loginUserSchema = object({
+export const loginUserSchema = object({
   body: object({
     email: string({
       required_error: "Email address is required",
@@ -19,6 +20,7 @@ type LoginUserInput = TypeOf<typeof loginUserSchema>;
 // Output
 type LoginUserOutput = {
   sessionId: string;
+  user: ShortUser;
 };
 
 // Endpoint
@@ -39,7 +41,15 @@ export const loginUserHandler: RouteHandler<
       user
     );
 
-    return respondSuccess(res, { sessionId });
+    return respondSuccess(res, {
+      sessionId,
+      user: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        emailVerified: user.emailVerified,
+      },
+    });
   } catch (err) {
     return next(err);
   }

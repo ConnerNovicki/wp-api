@@ -22,6 +22,7 @@ class SessionService {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            emailVerified: user.emailVerified,
         };
         Services.Redis.client.set(userSessionKey(sessionId), JSON.stringify(redisUser));
         return sessionId;
