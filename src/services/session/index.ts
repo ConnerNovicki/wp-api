@@ -22,8 +22,8 @@ export default class SessionService {
 
     const sessionId = uuidv4();
     res.cookie("session_id", sessionId, {
-      httpOnly: false, // true,
-      secure: false, // true,
+      httpOnly: true,
+      secure: true,
       sameSite: "lax",
       expires: new Date(Date.now() + sessionIdExpiration),
     });
