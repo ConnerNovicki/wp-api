@@ -29,11 +29,6 @@ class UserService {
             }
             const userSalt = yield bcryptjs_1.default.genSalt(12);
             const hashedPassword = yield bcryptjs_1.default.hash(password, userSalt);
-            // const verifyCode = crypto.randomBytes(32).toString("hex");
-            // const verifyToken = crypto
-            //   .createHash("sha256")
-            //   .update(verifyCode)
-            //   .digest("hex");
             const emailLower = email.toLowerCase();
             const user = yield Services.Db.user.create({
                 data: {

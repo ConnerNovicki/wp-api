@@ -12,8 +12,8 @@ class SessionService {
         const { Services } = context;
         const sessionId = (0, uuid_1.v4)();
         res.cookie("session_id", sessionId, {
-            httpOnly: true,
-            secure: true,
+            httpOnly: false,
+            secure: false,
             sameSite: "lax",
             expires: new Date(Date.now() + sessionIdExpiration),
         });
